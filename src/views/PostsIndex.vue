@@ -4,7 +4,11 @@
     <hr>
     <h1>{{ greeting }}</h1>
     <hr>
-    <h3>{{ posts }}</h3>
+    <div v-for="post in posts">
+      <h3><a v-bind:href="`/posts/${post.id}`">{{ post.title }}</a></h3>
+      <p>{{ post.body }}</p>
+      <hr>
+    </div>
   </div>
 </template>
 
