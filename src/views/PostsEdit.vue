@@ -1,24 +1,22 @@
 <template>
-  <div class="New-Post">
-    <img v-if="status" v-bind:src="`https://http.cat/${status}`">
+  <div class="post-edit">
     <form v-on:submit.prevent="submit()">
-      <h1>Create a new post</h1>
+      <h1>Edit a post</h1>
+      {{post}}
       <ul>
         <li class="text-danger" v-for="error in errors">{{ error }}</li>
       </ul>
       <div class="form-group">
         <label>Title:</label> 
-        <input type="text" class="form-control" v-model="title">
+        <input type="text" class="form-control" v-model="post.title">
       </div>
       <div class="form-group">
         <label>Body:</label>
-        <input type="text" class="form-control" v-model="body">
-        <small v-if="body.length < 100">You have {{ 100 - body.length }} characters remaining</small>
-        <small class="text-danger" v-if="body.length > 100">Your body must be under 100 characters</small>
+        <input type="text" class="form-control" v-model="post.body">
       </div>
       <div class="form-group">
         <label>Image:</label>
-        <input type="text" class="form-control" v-model="image">
+        <input type="text" class="form-control" v-model="post.image">
       </div>
       <input type="submit" class="btn btn-primary" value="Submit">
     </form>
@@ -31,33 +29,43 @@ import axios from "axios";
 export default {
   data: function() {
     return {
-      title: "",
-      body: "",
-      image: "",
+      post: {},
       errors: []
     };
   },
   methods: {
     submit: function() {
       var params = {
-        title: this.title,
-        body: this.body,
-        image: this.image,
+        title: this.post.title,
+        body: this.post.body,
+        image: this.post.image,
       };
 
       console.log(params);
 
       axios
-        .post("/api/posts", params)
+        .patch('/api/posts/${this.$route.params.id}', params)
         .then(response => {
           this.$router.push("/posts");
         })
         .catch(error => {
           this.errors = error.response.data.errors;
-          console.log(error.response);
-          this.status = error.response.status;
         });
+
+      
+    },
+    showPost: function() {
+      console.log('showing the post...');
+      console.log(this.$route);
+      // params[:id]      
+      axios.get(`/api/posts/${this.$route.params.id}`).then(response => {
+        console.log(response.data);
+        this.post = response.data;
+      });
     }
+  },
+  created: function() {
+    this.showPost();
   }
 };
 </script>

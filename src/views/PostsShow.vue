@@ -7,6 +7,10 @@
 
     <img v-bind:src="post.image">
 
+    <a v-bind:href="`/posts/${post.id}/edit`">Edit this post</a>
+
+    <p><button v-on:click="deletePost()">Delete this Post</button></p>
+
   </div>
 </template>
 
@@ -31,11 +35,19 @@ export default {
     showPost: function() {
       console.log('show me the post!');
       console.log(this.$route);
-      axios.get(`api/posts/${this.$route.params.id}`).then(response => {
+      axios.get(`/api/posts/${this.$route.params.id}`).then(response => {
         console.log(response.data);
         this.post = response.data;
       });
 
+    },
+
+    deletePost: function() {
+      console.log('deleting the post...');
+      axios.delete(`/api/posts/${this.$route.params.id}`).then(response => {
+        console.log(response.data);
+        this.$router.push('/posts');
+      });
     }
   }
 };
